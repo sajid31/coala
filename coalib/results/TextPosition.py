@@ -32,6 +32,60 @@ class TextPosition:
     def column(self):
         return self._column
 
+    def __lt__(self, other):
+        """
+        Test whether ``self`` is behind the other
+        ``TextPosition``.
+
+        If the column in a ``TextPosition`` is ``None``, consider
+        whole line. If the line in a ``TextPosition`` is ``None``,
+        consider whole file.
+
+        :param other: ``TextPosition`` to compare with.
+        :return:      Whether this ``TextPosition`` is behind the other
+                      one.
+        """
+        if self.line is None or other.line is None:
+            return False
+
+        if self.line == other.line:
+            if self.column is None or other.column is None:
+                return False
+            else:
+                if self.column < other.column:
+                    return True
+                else:
+                    return False
+        else:
+            return self.line < other.line
+
+    def __gt__(self, other):
+        """
+        Test whether ``self`` is ahead of the other
+        ``TextPosition``.
+
+        If the column in a ``TextPosition`` is ``None``, consider
+        whole line. If the line in a ``TextPosition`` is ``None``,
+        consider whole file.
+
+        :param other: ``TextPosition`` to compare with.
+        :return:      Whether this ``TextPosition`` is ahead of the other
+                      one.
+        """
+        if self.line is None or other.line is None:
+            return False
+
+        if self.line == other.line:
+            if self.column is None or other.column is None:
+                return False
+            else:
+                if self.column > other.column:
+                    return True
+                else:
+                    return False
+        else:
+            return self.line > other.line
+
     def __le__(self, other):
         """
         Test whether ``self`` is behind or equals the other
@@ -47,12 +101,15 @@ class TextPosition:
         """
         if self.line is None or other.line is None:
             return True
+
         if self.line == other.line:
-            return (True
-                    if self.column is None or
-                    other.column is None
-                    else
-                    self.column <= other.column)
+            if self.column is None or other.column is None:
+                return True
+            else:
+                if self.column <= other.column:
+                    return True
+                else:
+                    return False
         else:
             return self.line < other.line
 
@@ -71,11 +128,25 @@ class TextPosition:
         """
         if self.line is None or other.line is None:
             return True
+
         if self.line == other.line:
-            return (True
-                    if self.column is None or
-                    other.column is None
-                    else
-                    self.column >= other.column)
+            if self.column is None or other.column is None:
+                return True
+            else:
+                if self.column >= other.column:
+                    return True
+                else:
+                    return False
         else:
             return self.line > other.line
+
+    def __eq__(self, other):
+        """
+        Test whether ``self`` equals the other ``TextPosition``.
+
+        :param other: ``TextPosition`` to compare with.
+        :return:      Whether this ``TextPosition`` equals the
+                      other.
+        """
+        return (self.line == other.line and
+                self.column == other.column)
